@@ -29,13 +29,9 @@ jobs:
           FILES: ${{ steps.files.outputs.all }}
         run: |
           import os
-          import pathlib
-          import subprocess
-          import sys
 
           projects = set()
 
-          print("hello", sys.version)
           print("FILES", os.getenv("FILES"))
           print("FILES2", os.getenv("FILES").split(","))
 
@@ -43,15 +39,9 @@ jobs:
           if os.getenv("GITHUB_REF_TYPE") == "tag":
             projects.add(os.getenv("GITHUB_REF_NAME").rsplit("-", 1))
 
-          #git = subprocess.run(["git", "show", "--pretty=format:", "--name-only", os.getenv("GITHUB_SHA", "missing")], text=True, capture_output=True)
-          #print("git", git.returncode)
-          #print("git", git.stdout)
-          #for fname in git.stdout.splitlines():
           for fname in os.getenv("FILES").split(","):
-            print("fname", fname)
-            fpath = pathlib.Path(fname)
-            if pathlib.Path(fpath.parts[0]).is_dir():
-              projects.add(fpath.parts[0])
+            if len(fname.split("/")) > 1:
+              projects.add(fname.split("/")[0])
 
           for project in projects:
             print("project", project)
