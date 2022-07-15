@@ -29,11 +29,17 @@ jobs:
 
           projects = set()
 
+          print("hello")
+
           # for tags like `base-httpd-2.0.1`
           if os.getenv("GITHUB_REF_TYPE") == "tag":
             projects.add(os.getenv("GITHUB_REF_NAME").rsplit("-", 1))
 
-          for fname in subprocess.run(["git", "show", "--pretty=format:", "--name-only", os.getenv("GITHUB_SHA", "")], text=True, capture_output=True).stdout.splitlines():
+          git = subprocess.run(["git", "show", "--pretty=format:", "--name-only", os.getenv("GITHUB_SHA", "")], text=True, capture_output=True)
+          print(f"git: {git.returncode})
+          print(f"git: {git.stdout})
+          for fname in git.stdout.splitlines():
+            print(f"{fname}")
             fpath = pathlib.Path(fname)
             if fpath.is_dir():
               projects.add(fpath.parts[0])
