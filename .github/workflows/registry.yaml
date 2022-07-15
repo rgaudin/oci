@@ -1,0 +1,56 @@
+name: Build & Upload
+
+on:
+  push:
+    branches:
+      - 'main'
+    tags:
+      - 'base-httpd-*'
+      - 'kiwix-serve-*'
+
+jobs:
+  identify:
+    name: Identify which projects to build
+    runs-on: ubuntu-22.04
+    outputs:
+      base-httpd: ${{ steps.ident.outputs.base-httpd }}
+      kiwix-serve: ${{ steps.ident.outputs.kiwix-serve }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: ident
+        shell: python:
+        run: |
+          import os
+          import pathlib
+          import subprocess
+          import sys
+
+          projects = set()
+
+          # for tags like `base-httpd-2.0.1`
+          if os.getenv("GITHUB_REF_TYPE") == "tag":
+            projects.add(os.getenv("GITHUB_REF_NAME").rsplit("-", 1))
+
+          for fname in subprocess.run(["git", "show", '--pretty=""', "--name-only", os.getenv("GITHUB_SHA", "")], text=True, capture_output=True).stdout.splitlines():
+            fpath = pathlib.Path(fname)
+            if Path(fpath.parts[0]).is_dir():
+              projects.add(fpath.parts[0])
+
+          for project in projects:
+            print(f"::set-output name={project}::yes")
+
+  base-httpd:
+    name: Deploy base-httpd Image
+    runs-on: ubuntu-22.04
+    depends: identify
+    if: ${{ needs.identify.outputs.base-httpd == 'yes' }}
+    steps:
+      - run: echo "I ran base-httpd!"
+
+  kiwix-serve:
+    name: Deploy kiwix-serve Image
+    runs-on: ubuntu-22.04
+    depends: identify
+    if: ${{ needs.identify.outputs.kiwix-serve == 'yes' }}
+    steps:
+      - run: echo "I ran kiwix-serve!"
