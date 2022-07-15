@@ -17,6 +17,7 @@ jobs:
       kiwix-serve: ${{ steps.ident.outputs.kiwix-serve }}
     steps:
       - uses: actions/checkout@v2
+      - run: git show --pretty="format:" --name-only $GITHUB_SHA
       - id: ident
         shell: python
         run: |
@@ -31,12 +32,13 @@ jobs:
           if os.getenv("GITHUB_REF_TYPE") == "tag":
             projects.add(os.getenv("GITHUB_REF_NAME").rsplit("-", 1))
 
-          for fname in subprocess.run(["git", "show", '--pretty=""', "--name-only", os.getenv("GITHUB_SHA", "")], text=True, capture_output=True).stdout.splitlines():
+          for fname in subprocess.run(["git", "show", "--pretty=format:", "--name-only", os.getenv("GITHUB_SHA", "")], text=True, capture_output=True).stdout.splitlines():
             fpath = pathlib.Path(fname)
             if Path(fpath.parts[0]).is_dir():
               projects.add(fpath.parts[0])
 
           for project in projects:
+            print(f"{project=}")
             print(f"::set-output name={project}::yes")
 
   base-httpd:
