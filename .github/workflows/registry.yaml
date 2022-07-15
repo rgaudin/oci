@@ -39,7 +39,7 @@ jobs:
           print("git", git.returncode)
           print("git", git.stdout)
           for fname in git.stdout.splitlines():
-            print("fname", fname")
+            print("fname", fname)
             fpath = pathlib.Path(fname)
             if fpath.is_dir():
               projects.add(fpath.parts[0])
