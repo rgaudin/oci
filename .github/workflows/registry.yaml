@@ -16,11 +16,17 @@ jobs:
       base-httpd: ${{ steps.ident.outputs.base-httpd }}
       kiwix-serve: ${{ steps.ident.outputs.kiwix-serve }}
     steps:
-      - uses: actions/checkout@v2
-      - run: echo "COMMIT ${GITHUB_SHA}"
-      - run: git show --pretty="format:" --name-only ${GITHUB_SHA}
+      # - uses: actions/checkout@v2
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'csv'
+      #- run: echo "COMMIT ${GITHUB_SHA}"
+      #- run: git show --pretty="format:" --name-only ${GITHUB_SHA}
       - id: ident
         shell: python
+        env:
+          FILES: ${{ steps.files.outputs.all }}
         run: |
           import os
           import pathlib
@@ -30,15 +36,18 @@ jobs:
           projects = set()
 
           print("hello", sys.version)
+          print("FILES", os.getenv("FILES"))
+          print("FILES2", os.getenv("FILES").split(","))
 
           # for tags like `base-httpd-2.0.1`
           if os.getenv("GITHUB_REF_TYPE") == "tag":
             projects.add(os.getenv("GITHUB_REF_NAME").rsplit("-", 1))
 
-          git = subprocess.run(["git", "show", "--pretty=format:", "--name-only", os.getenv("GITHUB_SHA", "")], text=True, capture_output=True)
-          print("git", git.returncode)
-          print("git", git.stdout)
-          for fname in git.stdout.splitlines():
+          #git = subprocess.run(["git", "show", "--pretty=format:", "--name-only", os.getenv("GITHUB_SHA", "missing")], text=True, capture_output=True)
+          #print("git", git.returncode)
+          #print("git", git.stdout)
+          #for fname in git.stdout.splitlines():
+          for fname in os.getenv("FILES").split(","):
             print("fname", fname)
             fpath = pathlib.Path(fname)
             if fpath.is_dir():
