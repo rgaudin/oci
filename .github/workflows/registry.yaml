@@ -17,7 +17,8 @@ jobs:
       kiwix-serve: ${{ steps.ident.outputs.kiwix-serve }}
     steps:
       - uses: actions/checkout@v2
-      - run: git show --pretty="format:" --name-only $GITHUB_SHA
+      - run: echo "COMMIT: ${GITHUB_SHA}"
+      - run: git show --pretty="format:" --name-only ${GITHUB_SHA}
       - id: ident
         shell: python
         run: |
@@ -34,7 +35,7 @@ jobs:
 
           for fname in subprocess.run(["git", "show", "--pretty=format:", "--name-only", os.getenv("GITHUB_SHA", "")], text=True, capture_output=True).stdout.splitlines():
             fpath = pathlib.Path(fname)
-            if Path(fpath.parts[0]).is_dir():
+            if fpath.is_dir():
               projects.add(fpath.parts[0])
 
           for project in projects:
