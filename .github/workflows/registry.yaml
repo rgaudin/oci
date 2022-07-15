@@ -19,21 +19,21 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      # - id: files
-      #   uses: jitterbit/get-changed-files@v1
-      #   with:
-      #     format: 'csv'
       - id: files
-        uses: trilom/file-changes-action@v1.2.3
+        uses: jitterbit/get-changed-files@v1
         with:
-          output: ','
-          # pushBefore: '0000000000000000000000000000000000000000'
-          # pushAfter: ${{ github.sha }}
+          format: 'csv'
+      # - id: files
+      #   uses: trilom/file-changes-action@v1.2.3
+      #   with:
+      #     output: ','
+      #     # pushBefore: '0000000000000000000000000000000000000000'
+      #     # pushAfter: ${{ github.sha }}
       - id: ident
         shell: python
         env:
-          # FILES: ${{ steps.files.outputs.all }}
-          FILES: ${{ steps.files.outputs.files }}
+          FILES: ${{ steps.files.outputs.all }}
+          # FILES: ${{ steps.files.outputs.files }}
         run: |
           import os
 
