@@ -29,24 +29,24 @@ jobs:
 
           projects = set()
 
-          print("hello")
+          print("hello", sys.version)
 
           # for tags like `base-httpd-2.0.1`
           if os.getenv("GITHUB_REF_TYPE") == "tag":
             projects.add(os.getenv("GITHUB_REF_NAME").rsplit("-", 1))
 
           git = subprocess.run(["git", "show", "--pretty=format:", "--name-only", os.getenv("GITHUB_SHA", "")], text=True, capture_output=True)
-          print(f"git: {git.returncode})
-          print(f"git: {git.stdout})
+          print("git", git.returncode)
+          print("git", git.stdout)
           for fname in git.stdout.splitlines():
-            print(f"{fname}")
+            print("fname", fname")
             fpath = pathlib.Path(fname)
             if fpath.is_dir():
               projects.add(fpath.parts[0])
 
           for project in projects:
-            print(f"{project=}")
-            print(f"::set-output name={project}::yes")
+            print("project", project)
+            print("::set-output name={project}::yes".format(project=project))
 
   base-httpd:
     name: Deploy base-httpd Image
