@@ -48,7 +48,7 @@ jobs:
           projects = set()
           # for tags like `base-httpd-2.0.1`
           if os.getenv("GITHUB_REF_TYPE") == "tag":
-            projects.add(os.getenv("GITHUB_REF_NAME").rsplit("-", 1))
+            projects.add(os.getenv("GITHUB_REF_NAME").rsplit("-", 1)[0])
 
           for fname in os.getenv("FILES").split(","):
             if len(fname.split("/")) > 1:
