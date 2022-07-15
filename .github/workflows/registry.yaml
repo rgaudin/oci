@@ -16,25 +16,17 @@ jobs:
       base-httpd: ${{ steps.ident.outputs.base-httpd }}
       kiwix-serve: ${{ steps.ident.outputs.kiwix-serve }}
     steps:
-      # - uses: actions/checkout@v2
       - id: files
         uses: jitterbit/get-changed-files@v1
         with:
           format: 'csv'
-      #- run: echo "COMMIT ${GITHUB_SHA}"
-      #- run: git show --pretty="format:" --name-only ${GITHUB_SHA}
       - id: ident
         shell: python
         env:
           FILES: ${{ steps.files.outputs.all }}
         run: |
           import os
-
           projects = set()
-
-          print("FILES", os.getenv("FILES"))
-          print("FILES2", os.getenv("FILES").split(","))
-
           # for tags like `base-httpd-2.0.1`
           if os.getenv("GITHUB_REF_TYPE") == "tag":
             projects.add(os.getenv("GITHUB_REF_NAME").rsplit("-", 1))
@@ -44,9 +36,7 @@ jobs:
               projects.add(fname.split("/")[0])
 
           for project in projects:
-            print("project", project)
             print("::set-output name={project}::yes".format(project=project))
-
   base-httpd:
     name: Deploy base-httpd Image
     runs-on: ubuntu-22.04
