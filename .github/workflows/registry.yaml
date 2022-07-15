@@ -42,7 +42,7 @@ jobs:
   base-httpd:
     name: Deploy base-httpd Image
     runs-on: ubuntu-22.04
-    depends: identify
+    needs: identify
     if: ${{ needs.identify.outputs.base-httpd == 'yes' }}
     steps:
       - run: echo "I ran base-httpd!"
@@ -50,7 +50,7 @@ jobs:
   kiwix-serve:
     name: Deploy kiwix-serve Image
     runs-on: ubuntu-22.04
-    depends: identify
+    needs: identify
     if: ${{ needs.identify.outputs.kiwix-serve == 'yes' }}
     steps:
       - run: echo "I ran kiwix-serve!"
