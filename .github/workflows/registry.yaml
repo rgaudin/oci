@@ -36,6 +36,7 @@ jobs:
           FILES: ${{ steps.files.outputs.files }}
         run: |
           import os
+          
           print("FILES", os.getenv("FILES"))
           projects = set()
           # for tags like `base-httpd-2.0.1`
