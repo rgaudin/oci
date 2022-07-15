@@ -50,7 +50,7 @@ jobs:
           for fname in os.getenv("FILES").split(","):
             print("fname", fname)
             fpath = pathlib.Path(fname)
-            if fpath.is_dir():
+            if fpath.parts[0].is_dir():
               projects.add(fpath.parts[0])
 
           for project in projects:
